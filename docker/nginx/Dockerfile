@@ -30,7 +30,8 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN apt-get install -y \
         php \
         php-fpm \
-        php-mysql
+        php-mysql \
+        mc
 
 
 RUN add-apt-repository -y ppa:nginx/stable && \
