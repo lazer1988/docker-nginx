@@ -1,13 +1,13 @@
 version: "2"
 
 services:
-    lazer:
+    qwe:
         build: ./docker/nginx
-        container_name: lazer
+        container_name: qwe
         environment:
             ENVIRONMENT: dev
         volumes:
             - ./:/var/www/html
             - ./docker/nginx/vhost:/etc/nginx/sites-available
         ports:
-            - "8888:80"
+            - "5000:80"
