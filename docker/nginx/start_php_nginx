@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# start fpm
+service php7.2-fpm start
+
+# start nginx and keep container running
+nginx
