@@ -42,6 +42,7 @@ RUN apt-get install -y \
 RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/local/bin/composer
 
+# xdebug
 RUN apt-get install php-xdebug \
     && echo "xdebug.remote_enable=1" >> /etc/php/7.2/mods-available/xdebug.ini \
     && echo "xdebug.remote_handler=dbgp" >> /etc/php/7.2/mods-available/xdebug.ini \
@@ -51,6 +52,10 @@ RUN apt-get install php-xdebug \
     && echo "xdebug.remote_cookie_expire_time=3600" >> /etc/php/7.2/mods-available/xdebug.ini \
     && echo "xdebug.remote_host=172.17.0.1" >> /etc/php/7.2/mods-available/xdebug.ini \
     && echo "xdebug.idekey=PHPSTORM" >> /etc/php/7.2/mods-available/xdebug.ini
+
+# Redis
+RUN cd /var/www && git clone -b master https://github.com/phpredis/phpredis.git && cd /var/www/phpredis && phpize && ./configure && make && make install
+RUN echo "extension=redis.so" >> /etc/php/7.2/mods-available/redis.ini
 
 RUN add-apt-repository -y ppa:nginx/stable && \
   apt-get update && \
