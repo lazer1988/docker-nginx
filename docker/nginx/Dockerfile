@@ -65,6 +65,8 @@ RUN add-apt-repository -y ppa:nginx/stable && \
   echo "\ndaemon off;" >> /etc/nginx/nginx.conf && \
   chown -R www-data:www-data /var/lib/nginx
 
+COPY ./nginx.conf /etc/nginx/
+
 RUN mkdir /run/php
 
 COPY ./start_php_nginx /usr/local/bin/
