@@ -3,5 +3,8 @@
 # start fpm
 service php7.2-fpm start
 
+# start redis
+service redis-server start
+
 # start nginx and keep container running
 nginx
