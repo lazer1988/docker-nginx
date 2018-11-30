@@ -1,9 +1,10 @@
-FROM ubuntu:18.04
+FROM debian:9
 
 RUN apt-get update -y --fix-missing && apt-get install -my wget gnupg software-properties-common
 
 # phpize deps
 RUN apt-get install -y \
+        sudo \
         autoconf \
         file \
         g++ \
@@ -20,27 +21,33 @@ RUN apt-get install -y \
 RUN apt-get install -y \
         openssh-client \
         ca-certificates \
+        apt-transport-https \
         curl \
         libedit2 \
         libsqlite3-0 \
         libxml2 \
         acl \
         git \
-        -qq npm \
     --no-install-recommends
 
 ENV TZ=Europe/Kiev
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN apt-get install -y \
-        php \
-        php-dev \
-        php-fpm \
-        php-mysql \
-        php-apcu \
-        php-xml \
+# add PHP repo
+RUN wget -q https://packages.sury.org/php/apt.gpg -O- | sudo apt-key add -
+RUN echo "deb https://packages.sury.org/php/ stretch main" | sudo tee /etc/apt/sources.list.d/php.list
+
+# install PHP
+RUN apt-get update -y --fix-missing && \
+    apt-get install -y \
+        php7.2 \
+        php7.2-dev \
+        php7.2-fpm \
+        php7.2-mysql \
+        php7.2-apcu \
+        php7.2-xml \
         redis-server \
-        php-redis
+        php7.2-redis
 
 COPY ./redis.conf /etc/redis/
 
@@ -58,9 +65,7 @@ RUN apt-get install php-xdebug \
     && echo "xdebug.remote_host=172.17.0.1" >> /etc/php/7.2/mods-available/xdebug.ini \
     && echo "xdebug.idekey=PHPSTORM" >> /etc/php/7.2/mods-available/xdebug.ini
 
-RUN add-apt-repository -y ppa:nginx/stable && \
-  apt-get update && \
-  apt-get install -y nginx && \
+RUN apt-get install -y nginx && \
   rm -rf /var/lib/apt/lists/* && \
   echo "\ndaemon off;" >> /etc/nginx/nginx.conf && \
   chown -R www-data:www-data /var/lib/nginx
@@ -75,11 +80,9 @@ RUN chmod +x /usr/local/bin/start_php_nginx
 # Define mountable directories.
 VOLUME ["/etc/nginx/sites-enabled", "/etc/nginx/certs", "/etc/nginx/conf.d", "/var/log/nginx", "/var/www/html"]
 
-# Install npm 2 version.
-RUN npm install -g npm@latest-2
-
-# Install specific node version. 8 LTS
-RUN npm install -g n && n 8.*
+# Install nodejs version 10 LTS
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN apt-get install -y nodejs
 
 RUN chown -R www-data:www-data /var/www/html
 
