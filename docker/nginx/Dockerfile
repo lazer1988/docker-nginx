@@ -41,6 +41,7 @@ RUN echo "deb https://packages.sury.org/php/ stretch main" | sudo tee /etc/apt/s
 RUN apt-get update -y --fix-missing && \
     apt-get install -y \
         php7.2 \
+        php7.2-curl \
         php7.2-dev \
         php7.2-fpm \
         php7.2-mysql \
